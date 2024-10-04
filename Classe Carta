@@ -1,0 +1,42 @@
+package supertrunfo;
+
+public class Carta {
+    private String nome;
+    private int calvice;
+    private int potencia;
+    private int vida;
+    private int inteligencia;
+
+    public Carta(String nome, int calvice, int potencia, int vida, int inteligencia) {
+        this.nome = nome;
+        this.calvice = calvice;
+        this.potencia = potencia;
+        this.vida = vida;
+        this.inteligencia = inteligencia;
+    }
+
+    public String getNome() {
+        return nome;
+    }
+
+    public int getCalvice() {
+        return calvice;
+    }
+
+    public int getPotencia() {
+        return potencia;
+    }
+
+    public int getVida() {
+        return vida;
+    }
+
+    public int getInteligencia() {
+        return inteligencia;
+    }
+
+    @Override
+    public String toString() {
+        return nome + " | Calvice: " + calvice + ", PotÃªncia: " + potencia + ", Vida: " + vida + ", InteligÃªncia: " + inteligencia;
+    }
+}
