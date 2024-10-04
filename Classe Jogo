@@ -1,0 +1,161 @@
+package supertrunfo;
+
+import java.util.Random;
+import java.util.Scanner;
+
+public class JogoTrunfo {
+    private Jogador jogador1;
+    private Jogador jogador2;
+    private Carta[] opcoesDeCartas;
+
+    public JogoTrunfo(Jogador jogador1, Jogador jogador2) {
+        this.jogador1 = jogador1;
+        this.jogador2 = jogador2;
+        this.opcoesDeCartas = criarOpcoesDeCartas();
+    }
+
+    private Carta[] criarOpcoesDeCartas() {
+        Carta[] cartas = new Carta[10];
+        cartas[0] = new Carta("----Romero Paulera----", 400, 850, 500, 300);
+        cartas[1] = new Carta("----Anaconda 5 o filme----", 999, 760, 200, 800);
+        cartas[2] = new Carta("----Shaolin Matador de Porco----", 600, 500, 999, 100);
+        cartas[3] = new Carta("----Datena Cadeirinha----", 100, 950, 600, 250);
+        cartas[4] = new Carta("----Hugo que trancou o curso----", 400, 800, 500, 0);
+        cartas[5] = new Carta("----Neima '0 POC-POC'----", 1000, 700, 69, 900);
+        cartas[6] = new Carta("----Chat Gepeto----", 0, 800, 1000, 500);
+        cartas[7] = new Carta("----Tocano Calebe----", 500, 850, 300, 250);
+        cartas[8] = new Carta("----Denver McNuggets----", 600, 777, 200, 850);
+        cartas[9] = new Carta("----Japodi Al-Mussah----", 100, 700, 1000, 900);
+        return cartas;
+    }
+
+    public void escolherCartas(Jogador jogador) {
+        Scanner scanner = new Scanner(System.in);
+        System.out.println(jogador.getNome() + ", escolha até 6 cartas:");
+
+        for (int i = 0; i < opcoesDeCartas.length; i++) {
+            System.out.println("\n" + (i + 1) + ". " + opcoesDeCartas[i]);
+        }
+
+        for (int i = 0; i < 6; i++) {
+            System.out.println("\nEscolha a carta número " + (i + 1) + ": ");
+            int escolha = scanner.nextInt() - 1;
+
+            if (escolha >= 0 && escolha < opcoesDeCartas.length) {
+                jogador.adicionarCarta(opcoesDeCartas[escolha]);
+            } else {
+                System.out.println("Escolha inválida, tente novamente.");
+                i--;
+            }
+        }
+    }
+
+    public void iniciarJogo() {
+        Scanner scanner = new Scanner(System.in);
+        Random random = new Random();
+        String[] atributos = {"Calvice", "Potência", "Vida", "Inteligência"};
+
+        while (jogador1.temCartas() && jogador2.temCartas()) {
+            System.out.println(jogador1.getNome() + ", escolha sua carta para a rodada:");
+            Carta cartaJogador1 = escolherCarta(jogador1);
+
+            System.out.println(jogador2.getNome() + ", escolha sua carta para a rodada:");
+            Carta cartaJogador2 = escolherCarta(jogador2);
+
+            int jogadorEscolhido = random.nextInt(2); 
+            System.out.println((jogadorEscolhido == 0 ? jogador1.getNome() : jogador2.getNome()) + " vai escolher o atributo.");
+
+            int atributoEscolhido = escolherAtributo(scanner, atributos);
+            System.out.println("O atributo escolhido foi: " + atributos[atributoEscolhido] + "\n");
+
+            int valor1 = 0, valor2 = 0;
+            switch (atributoEscolhido) {
+                case 0:
+                    valor1 = cartaJogador1.getCalvice();
+                    valor2 = cartaJogador2.getCalvice();
+                    break;
+                case 1:
+                    valor1 = cartaJogador1.getPotencia();
+                    valor2 = cartaJogador2.getPotencia();
+                    break;
+                case 2:
+                    valor1 = cartaJogador1.getVida();
+                    valor2 = cartaJogador2.getVida();
+                    break;
+                case 3:
+                    valor1 = cartaJogador1.getInteligencia();
+                    valor2 = cartaJogador2.getInteligencia();
+                    break;
+            }
+
+            if (valor1 > valor2) {
+                System.out.println(jogador1.getNome() + " venceu a rodada!");
+                jogador1.adicionarCarta(cartaJogador1); 
+                jogador2.perderCarta(cartaJogador2); 
+            } else if (valor2 > valor1) {
+                System.out.println(jogador2.getNome() + " venceu a rodada!");
+                jogador2.adicionarCarta(cartaJogador2); 
+                jogador1.perderCarta(cartaJogador1); 
+            } else {
+                System.out.println("Empate! Nenhum jogador ganha a carta.");
+            }
+
+            System.out.println();
+        }
+
+        if (jogador1.temCartas()) {
+            System.out.println("------------" + jogador1.getNome() + " venceu o jogo!------------");
+        } else {
+            System.out.println("------------" + jogador2.getNome() + " venceu o jogo!------------");
+        }
+
+        scanner.close();
+    }
+
+    private Carta escolherCarta(Jogador jogador) {
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.println("Cartas disponíveis:");
+        for (int i = 0; i < jogador.getCartas().size(); i++) {
+            System.out.println((i + 1) + ". " + jogador.getCartas().get(i));
+        }
+
+        System.out.println("Escolha o número da carta que deseja jogar:");
+        int escolha = scanner.nextInt() - 1;
+
+        while (escolha < 0 || escolha >= jogador.getCartas().size()) {
+            System.out.println("Escolha inválida. Tente novamente.");
+            escolha = scanner.nextInt() - 1;
+        }
+
+        return jogador.jogarCartaNaPosicao(escolha);
+    }
+
+    private int escolherAtributo(Scanner scanner, String[] atributos) {
+        int atributoEscolhido = -1;
+        while (atributoEscolhido < 0 || atributoEscolhido >= atributos.length) {
+            System.out.println("Escolha um atributo: 1. Calvice, 2. Potência, 3. Vida, 4. Inteligência");
+            try {
+                atributoEscolhido = Integer.parseInt(scanner.nextLine()) - 1;
+                if (atributoEscolhido < 0 || atributoEscolhido >= atributos.length) {
+                    System.out.println("Atributo inválido. Tente novamente.");
+                }
+            } catch (NumberFormatException e) {
+                System.out.println("Entrada inválida. Por favor, insira um número.");
+            }
+        }
+        return atributoEscolhido;
+    }
+
+    public static void main(String[] args) {
+        Jogador jogador1 = new Jogador("Jogador 1");
+        Jogador jogador2 = new Jogador("Jogador 2");
+
+        JogoTrunfo jogo = new JogoTrunfo(jogador1, jogador2);
+
+        jogo.escolherCartas(jogador1);
+        jogo.escolherCartas(jogador2);
+
+        jogo.iniciarJogo();
+    }
+}
